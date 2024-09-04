@@ -1,0 +1,45 @@
+# Basic Tyk API + Policies validation triggered on any PR requests. The idea of this workflow is to validate specific field requirements 
+# or enforce governance to make sure specific custom plugins are used or formats 
+name: Tyk Schema Validation
+
+# Perform the Tyk schema validation only on PR requests
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  schema-validation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Check out the current repo and fetch only the current commits (JTBD)
+    - name: 'Checkout Repository'
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    # List the content that exists within the repo to validate the files
+    - name: 'List Repository Contents'
+      run: |
+        ls -la
+        pwd
+
+    # Install JQ library used to introspect the API and Policy definitions
+    - name: 'Install JQ Library'
+      uses: dcarbone/install-jq-action@v2
+      id: version
+      with:
+        cmd: 'echo "version ${{ steps.version.outputs.value }}"'
+
+    # Governance to validate minimum required fields
+    - name: 'Validate min fields for APIs and Policies'
+      run: |
+        for file in $(find . -name "*.json"); do
+          echo "Checking $file"
+          if jq -e '.proxy.target_url | length > 0' "$file" > /dev/null; then
+            echo "$file contains a valid proxy.target_url."
+          else
+            echo "$file does NOT contain a valid proxy.target_url."
+            exit 1
+          fi
+        done
