@@ -205,7 +205,7 @@
     "client_certificates": [],
     "upstream_certificates": {},
     "pinned_public_keys": {},
-    "enable_jwt": false,
+    "enable_jwt": true,
     "use_standard_auth": true,
     "use_go_plugin_auth": false,
     "enable_coprocess_auth": false,
