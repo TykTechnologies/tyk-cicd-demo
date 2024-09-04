@@ -53,7 +53,7 @@ jobs:
           # Create a new file path in the stg directory with a stg_ prefix
           new_file="stg-$(basename "$file")"
           # Replace proxy.target_url with the GitHub secret value and write to the new file
-          jq --arg url "$STG_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "$new_file"
+          jq --arg url "$STG_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "../stg/$new_file"
           echo "Updated proxy.target_url in $new_file"
         done
 
@@ -65,5 +65,6 @@ jobs:
       run: |
         git config --global user.name '$ORG_NAME'
         git config --global user.email '$ORG_EMAIL'
+        git add .
         git commit -am "CI: Update staging assets"
         git push
