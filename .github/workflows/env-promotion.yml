@@ -57,8 +57,14 @@ jobs:
           echo "Updated proxy.target_url in $new_file"
         done
 
+    # Check for modified files
+    - name: Check for modified files
+      id: git-check
+      run: echo ::set-output name=modified::$(if [ -n "$(git status --porcelain)" ]; then echo "true"; else echo "false"; fi)
+    
     # Push changes to remote repository
     - name: Commit changes
+      if: steps.git-check.outputs.modified == 'true'
       env:
         ORG_NAME: ${{ secrets.ORG_NAME }}
         ORG_EMAIL: ${{ secrets.ORG_EMAIL }}
