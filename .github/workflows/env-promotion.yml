@@ -56,3 +56,14 @@ jobs:
           jq --arg url "$STG_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "$new_file"
           echo "Updated proxy.target_url in $new_file"
         done
+
+    # Push changes to remote repository
+    - name: Commit report
+      env:
+        ORG_NAME: ${{ secrets.ORG_NAME }}
+        ORG_EMAIL: ${{ secrets.ORG_EMAIL }}
+      run: |
+        git config --global user.name '$ORG_NAME'
+        git config --global user.email '$ORG_EMAIL'
+        git commit -am "CI: Update staging assets"
+        git push
