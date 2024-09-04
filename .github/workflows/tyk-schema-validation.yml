@@ -35,8 +35,9 @@ jobs:
     # Governance to validate minimum required fields
     - name: 'Validate min fields for APIs and Policies'
       run: |
+        cd ./dev
         for file in $(find . -name "*.json"); do
-            echo "Validating $file"
+            echo "Validating API/Policy definition $file"
             
             # Check if target_url is valid and not empty
             if jq -e '.proxy.target_url | length > 0' "$file" > /dev/null; then
@@ -48,7 +49,7 @@ jobs:
               exit 1
             fi
             
-            # Check if either JWT auth or or StaticMTLS is enabled
+            # Check if either JWT auth or or MutuatTLS is enabled
             if jq -e '.enable_jwt == true or .auth_configs.use_mutual_tls_auth == true' "$file" > /dev/null; then
               echo "$file has either enable_jwt or auth_configs.use_mutual_tls_auth set to true."
             else
