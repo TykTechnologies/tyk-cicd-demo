@@ -1,11 +1,14 @@
+# Basic env promotion with GH secret store substituion triggered on successful PR reviews and approval with a push to main branch.
+# This workflow will substitution env specific values for both staging and prod and deploy them as required.
 name: API and Policy Promotion
 
+# Perform the env promotion only on push to main branch
 on:
     push:
       branches: [ main ]
 
 jobs:
-  env-promotion:
+  staging-env-promotion:
     runs-on: ubuntu-latest
     
     steps:
@@ -20,3 +23,36 @@ jobs:
       run: |
         ls -la
         pwd
+    
+    # Install JQ library used to introspect the API and Policy definitions
+    - name: 'Install JQ Library'
+      uses: dcarbone/install-jq-action@v2
+    - name: 'Check JQ Library'
+      run: |
+        which jq
+        jq --version
+
+    # Create stg directory if needed
+    - name: "Create stg directory"
+      run: |
+        if [ ! -d stg ]; then
+          mkdir stg
+          echo "Created 'stg' directory."
+        else
+          echo "'stg' directory already exists."
+        fi
+
+    # Substitute with staging specific environment variables
+    - name: Replace proxy.target_url in JSON files
+      env:
+        STG_US_PROXY_TARGET_URL: ${{ secrets.STG_US_PROXY_TARGET_URL }}
+      run: |
+        cd ./dev
+        for file in $(find . -name "*.json"); do
+          echo "Processing $file"
+          # Create a new file path in the stg directory with a stg_ prefix
+          new_file="stg/stg-$(basename "$file")"
+          # Replace proxy.target_url with the GitHub secret value and write to the new file
+          jq --arg url "$STG_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "$new_file"
+          echo "Updated proxy.target_url in $new_file"
+        done
