@@ -27,19 +27,33 @@ jobs:
     # Install JQ library used to introspect the API and Policy definitions
     - name: 'Install JQ Library'
       uses: dcarbone/install-jq-action@v2
-      id: version
-      with:
-        cmd: 'echo "version ${{ steps.version.outputs.value }}"'
+    - name: 'Check JQ Library'
+      run: |
+        which jq
+        jq --version
 
     # Governance to validate minimum required fields
     - name: 'Validate min fields for APIs and Policies'
       run: |
         for file in $(find . -name "*.json"); do
-          echo "Checking $file"
-          if jq -e '.proxy.target_url | length > 0' "$file" > /dev/null; then
-            echo "$file contains a valid proxy.target_url."
-          else
-            echo "$file does NOT contain a valid proxy.target_url."
-            exit 1
-          fi
-        done
+            echo "Validating $file"
+            
+            # Check if target_url is valid and not empty
+            if jq -e '.proxy.target_url | length > 0' "$file" > /dev/null; then
+              echo "$file contains a valid proxy.target_url."
+              target_url=$(jq -r '.proxy.target_url' "$file")
+              echo "proxy.target_url: $target_url"
+            else
+              echo "$file does NOT contain a valid proxy.target_url."
+              exit 1
+            fi
+            
+            # Check if either JWT auth or or StaticMTLS is enabled
+            if jq -e '.enable_jwt == true or .auth_configs.use_mutual_tls_auth == true' "$file" > /dev/null; then
+              echo "$file has either enable_jwt or auth_configs.use_mutual_tls_auth set to true."
+            else
+              echo "$file does NOT have either enable_jwt or auth_configs.use_mutual_tls_auth set to true."
+              exit 1
+            fi
+            
+          done
