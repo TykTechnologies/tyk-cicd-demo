@@ -1,0 +1,22 @@
+name: API and Policy Promotion
+
+on:
+    push:
+      branches: [ main ]
+
+jobs:
+  env-promotion:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Check out the current repo and fetch only the current commits (JTBD)
+    - name: 'Checkout Repository'
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    # List the content that exists within the repo to validate the files
+    - name: 'List Repository Contents'
+      run: |
+        ls -la
+        pwd

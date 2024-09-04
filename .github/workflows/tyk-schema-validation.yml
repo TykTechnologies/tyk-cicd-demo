@@ -36,7 +36,7 @@ jobs:
     - name: 'Validate min fields for APIs and Policies'
       run: |
         for file in $(find . -name "*.json"); do
-            echo "Validating $file"
+            echo "Validating API/Policy definition $file"
             
             # Check if target_url is valid and not empty
             if jq -e '.proxy.target_url | length > 0' "$file" > /dev/null; then
