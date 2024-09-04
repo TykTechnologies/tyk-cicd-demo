@@ -58,13 +58,13 @@ jobs:
         done
 
     # Push changes to remote repository
-    - name: Commit report
+    - name: Commit changes
       env:
         ORG_NAME: ${{ secrets.ORG_NAME }}
         ORG_EMAIL: ${{ secrets.ORG_EMAIL }}
       run: |
-        git config --global user.name '$ORG_NAME'
-        git config --global user.email '$ORG_EMAIL'
+        git config --global user.name "$ORG_NAME"
+        git config --global user.email "$ORG_EMAIL"
         git add .
         git commit -am "CI: Update staging assets"
         git push
