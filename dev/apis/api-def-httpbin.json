@@ -7,7 +7,7 @@
     "enable_proxy_protocol": false,
     "api_id": "9e81b88e87fd418f53aabcefc67bf89c",
     "org_id": "66c48ad619922c0001ad3ebf",
-    "use_keyless": false,
+    "use_keyless": true,
     "use_oauth2": false,
     "external_oauth": {
         "enabled": false,

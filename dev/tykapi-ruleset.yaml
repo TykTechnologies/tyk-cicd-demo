@@ -1,7 +1,7 @@
 rules:
   no-keyless-api:
     description: APIs must not be keyless
-    given: "$.api_definition"
+    given: "$.use_keyless"
     severity: error
     then:
       field: use_keyless 
