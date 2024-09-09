@@ -1,6 +1,6 @@
 # Basic env promotion with GH secret store substituion triggered on successful PR reviews and approval with a push to main branch.
 # This workflow will substitution env specific values for both staging and prod and deploy them as required.
-name: API and Policy Promotion
+name: Generate Staging Tyk Assets
 
 # Perform the env promotion only on push to main branch
 on:
