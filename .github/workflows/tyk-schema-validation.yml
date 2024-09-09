@@ -65,7 +65,7 @@ jobs:
               echo "environment=prod" >> $GITHUB_ENV
             else
               echo "Error: No relevant files modified in the pull request." >&2
-              exit 1
+              echo "environment=dev" >> $GITHUB_ENV
             fi
           fi
 
