@@ -59,10 +59,10 @@ jobs:
             # Determine which directory to process based on modified files
             MODIFIED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
             echo $MODIFIED_FILES
-            if echo "$MODIFIED_FILES" | grep -q '^infrastructure/staging/tyk/'; then
-              echo "environment=staging" >> $GITHUB_ENV
-            elif echo "$MODIFIED_FILES" | grep -q '^infrastructure/production/tyk/'; then
-              echo "environment=production" >> $GITHUB_ENV
+            if echo "$MODIFIED_FILES" | grep -q '^stg/'; then
+              echo "environment=stg" >> $GITHUB_ENV
+            elif echo "$MODIFIED_FILES" | grep -q '^/prod/'; then
+              echo "environment=prod" >> $GITHUB_ENV
             else
               echo "Error: No relevant files modified in the pull request." >&2
               exit 1
