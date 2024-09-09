@@ -6,7 +6,7 @@ on:
       branches: [ main ]
 
 jobs:
-    env-promotion:
+    set-up-prod-tyk-assets:
         runs-on: ubuntu-latest
                 
         steps:
