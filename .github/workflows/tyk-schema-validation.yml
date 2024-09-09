@@ -5,7 +5,20 @@ name: Tyk Schema Validation
 # Perform the Tyk schema validation only on PR requests
 on:
   pull_request:
-    branches: [ main ]
+    paths:
+      - 'stg/**'
+      - 'prod/**'
+  workflow_dispatch:
+    inputs:
+      environment: 
+        type: choice
+        options:
+          - stg
+          - prod
+  workflow_call:
+    inputs:
+      environment:
+        type: string
 
 jobs:
   schema-validation:
@@ -31,8 +44,15 @@ jobs:
       run: |
         which jq
         jq --version
+    
+    # Execute Spectral / Stoplight plugin to validate Tyk APIs
+    - uses: stoplightio/spectral-action@latest
+      with:
+          file_glob: infrastructure/${{ env.environment }}/apis/api-*.json
+          spectral_ruleset: infrastructure/${{ env.environment }}/tykapi-ruleset.yaml
+      continue-on-error: false
 
-    # Governance to validate minimum required fields
+    # Tyk API Linting and API Governance for Minimum Required Fields
     - name: 'Validate min fields for APIs and Policies'
       run: |
         cd ./dev
