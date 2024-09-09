@@ -47,10 +47,11 @@ jobs:
         jq --version
     
     # Execute Spectral / Stoplight plugin to validate Tyk APIs
-    - uses: stoplightio/spectral-action@latest
+    - name: Run API Linter and Validate Required Fields
+      uses: stoplightio/spectral-action@latest
       with:
-          file_glob: infrastructure/${{ env.environment }}/apis/api-*.json
-          spectral_ruleset: infrastructure/${{ env.environment }}/tykapi-ruleset.yaml
+          file_glob: ${{ env.environment }}/apis/api-*.json
+          spectral_ruleset: ${{ env.environment }}/tykapi-ruleset.yaml
       continue-on-error: false
 
     # Tyk API Linting and API Governance for Minimum Required Fields
