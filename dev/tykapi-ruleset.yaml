@@ -28,8 +28,8 @@ rules:
       function: anyOf
       functionOptions:
         criteria:
-          - field: enable_jwt
+          - field: $.enable_jwt
             function: truthy
-          - field: use_mutual_tls_auth
+          - field: $.use_mutual_tls_auth
             function: truthy
       severity: error
