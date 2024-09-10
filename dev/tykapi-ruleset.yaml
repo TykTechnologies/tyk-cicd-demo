@@ -17,19 +17,13 @@ rules:
       functionOptions:
         match: '^(?!\s*$).+'
 
-  security-authentication:
-    description: |
-      The API specification must specify either JWT authentication or mutual TLS authentication.
-    message: |
-      Either `.enable_jwt` must be true or `use_mutual_tls_auth` must be true.
-    given: $  # Root level
+  check-auth-settings:
+    description: Ensure either `enable_jwt` or `use_mutual_tls_auth` is set to true
+    message: "Either `enable_jwt` or `use_mutual_tls_auth` must be set to true."
+    severity: error
+    given: "$"
     then:
-      field: $  # Root level
-      function: anyOf
-      functionOptions:
-        criteria:
-          - field: $.enable_jwt
-            function: truthy
-          - field: $.use_mutual_tls_auth
-            function: truthy
-      severity: error
+      function: "truthy"
+      field: "enable_jwt"
+      or:
+        - field: "use_mutual_tls_auth"
