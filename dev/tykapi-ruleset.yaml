@@ -30,6 +30,6 @@ rules:
         criteria:
           - field: enable_jwt
             function: truthy
-          - field: auth_configs.use_mutual_tls_auth
+          - field: auth_configs
             function: truthy
     severity: error
