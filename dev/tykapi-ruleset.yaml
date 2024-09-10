@@ -18,11 +18,18 @@ rules:
         match: '^(?!\s*$).+'
 
   security-authentication-requirement:
-    description: The API specification must specify either JWT authentication or mutual TLS authentication
-    given: "$"
+    description: |
+      The API specification must specify either JWT authentication or mutual TLS authentication.
+    message: |
+      Either `.enable_jwt` must be true or `.auth_configs.use_mutual_tls_auth` must be true.
+    given: $  # Root level
     then:
-      field: $
-      function: pattern
+      field: $  # Root level
+      function: anyOf
       functionOptions:
-        pattern: '^(?!.*(enable_jwt: true|auth_configs:.*use_mutual_tls_auth: true)).*'
+        criteria:
+          - field: enable_jwt
+            function: truthy
+          - field: auth_configs.use_mutual_tls_auth
+            function: truthy
       severity: error
