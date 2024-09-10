@@ -22,9 +22,9 @@ rules:
       The API specification must specify either JWT authentication or mutual TLS authentication.
     message: |
       Either `.enable_jwt` must be true or `.auth_configs.use_mutual_tls_auth` must be true.
-    given: $  # Root level
+    given: "$."  
     then:
-      field: $  # Root level
+      field: "$."
       function: anyOf
       functionOptions:
         criteria:
