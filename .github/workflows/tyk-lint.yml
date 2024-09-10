@@ -4,10 +4,10 @@ name: Tyk Schema Validation / Linter
 
 # Perform the Tyk schema validation only on PR requests
 on:
-  # pull_request:
-  #   paths:
-  #     - 'stg/**'
-  #     - 'prod/**'
+  pull_request:
+    paths:
+      - 'stg/**'
+      - 'prod/**'
   workflow_dispatch:
     inputs:
       environment: 
@@ -37,15 +37,8 @@ jobs:
       run: |
         ls -la
         pwd
-
-    # # Install JQ library used to introspect the API and Policy definitions
-    # - name: 'Install JQ Library'
-    #   uses: dcarbone/install-jq-action@v2
-    # - name: 'Check JQ Library'
-    #   run: |
-    #     which jq
-    #     jq --version
     
+    # Determine the environment to lint run linter against
     - name: Determine Environment
       id: determine_environment
       run: |
@@ -59,7 +52,8 @@ jobs:
             echo "environment=dev" >> $GITHUB_ENV
             echo "Error: No environment has been specified. Setting to dev environment." >&2
           fi
-
+    
+    # Tyk API Linting and Validation using Spectral and Stoplight
     - name: Lint API Definitions
       uses: stoplightio/spectral-action@latest
       with:
@@ -67,7 +61,15 @@ jobs:
         spectral_ruleset: ${{ env.environment }}/tykapi-ruleset.yaml
       continue-on-error: false
 
-    # # Tyk API Linting and API Governance for Minimum Required Fields
+    # # Install JQ library used to introspect the API and Policy definitions
+    # - name: 'Install JQ Library'
+    #   uses: dcarbone/install-jq-action@v2
+    # - name: 'Check JQ Library'
+    #   run: |
+    #     which jq
+    #     jq --version
+
+    # # Tyk API Linting and Validation using JQ Library
     # - name: 'Validate min fields for APIs and Policies'
     #   run: |
     #     cd ./dev
