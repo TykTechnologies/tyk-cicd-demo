@@ -21,7 +21,7 @@ rules:
     description: |
       The API specification must specify either JWT authentication or mutual TLS authentication.
     message: |
-      Either `.enable_jwt` must be true or `.auth_configs.use_mutual_tls_auth` must be true.
+      Either `.enable_jwt` must be true or `use_mutual_tls_auth` must be true.
     given: $  # Root level
     then:
       field: $  # Root level
@@ -30,6 +30,6 @@ rules:
         criteria:
           - field: enable_jwt
             function: truthy
-          - field: auth_configs
+          - field: use_mutual_tls_auth
             function: truthy
-    severity: error
+      severity: error
