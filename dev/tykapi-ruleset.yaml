@@ -17,14 +17,14 @@ rules:
       functionOptions:
         match: '^(?!\s*$).+'
 
-  security-authentication-requirement:
+  security-authentication:
     description: |
       The API specification must specify either JWT authentication or mutual TLS authentication.
     message: |
       Either `.enable_jwt` must be true or `.auth_configs.use_mutual_tls_auth` must be true.
-    given: "$."  
+    given: $  # Root level
     then:
-      field: "$."
+      field: $  # Root level
       function: anyOf
       functionOptions:
         criteria:
@@ -32,4 +32,4 @@ rules:
             function: truthy
           - field: auth_configs.use_mutual_tls_auth
             function: truthy
-      severity: error
+    severity: error
