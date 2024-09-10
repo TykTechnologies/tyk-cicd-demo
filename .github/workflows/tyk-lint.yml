@@ -49,8 +49,8 @@ jobs:
             # Workflow called with an input
             echo "environment=${{ inputs.environment }}" >> $GITHUB_ENV
           else
-            echo "environment=dev" >> $GITHUB_ENV
-            echo "Error: No environment has been specified. Setting to dev environment." >&2
+            # Pull request called with an input
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_ENV
           fi
     
     # Tyk API Linting and Validation using Spectral and Stoplight

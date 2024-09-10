@@ -5,12 +5,12 @@ name: Tyk Development Workflow
 # Execute workflow on dev pull requests
 on:
     pull_request:
-      branches: [ main ]
+        paths:
+            - 'dev/**'
 
 jobs:
     # Run linter and validation workflow
     tyk-lint:
         uses: ./.github/workflows/tyk-lint.yml
         with:
-            environment: stg
-            
+            environment: 'dev'

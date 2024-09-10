@@ -201,7 +201,7 @@
         "body_user_regexp": "",
         "body_password_regexp": ""
     },
-    "use_mutual_tls_auth": true,
+    "use_mutual_tls_auth": false,
     "client_certificates": [],
     "upstream_certificates": {},
     "pinned_public_keys": {},
