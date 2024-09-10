@@ -1,19 +1,19 @@
-# Basic Tyk API + Policies validation triggered on any PR requests. The idea of this workflow is to validate specific field requirements 
+# Basic Tyk API and Policies schema validation and linter triggered on development assets. The idea of this workflow is to validate specific field requirements 
 # or enforce governance to make sure specific custom plugins are used or formats 
-name: Tyk Schema Validation
+name: Tyk Schema Validation / Linter
 
 # Perform the Tyk schema validation only on PR requests
 on:
-  pull_request:
-    paths:
-      - 'dev/**'
-      - 'stg/**'
-      - 'prod/**'
+  # pull_request:
+  #   paths:
+  #     - 'stg/**'
+  #     - 'prod/**'
   workflow_dispatch:
     inputs:
       environment: 
         type: choice
         options:
+          - dev
           - stg
           - prod
   workflow_call:
@@ -38,39 +38,27 @@ jobs:
         ls -la
         pwd
 
-    # Install JQ library used to introspect the API and Policy definitions
-    - name: 'Install JQ Library'
-      uses: dcarbone/install-jq-action@v2
-    - name: 'Check JQ Library'
-      run: |
-        which jq
-        jq --version
+    # # Install JQ library used to introspect the API and Policy definitions
+    # - name: 'Install JQ Library'
+    #   uses: dcarbone/install-jq-action@v2
+    # - name: 'Check JQ Library'
+    #   run: |
+    #     which jq
+    #     jq --version
     
-    - name: Determine Environment
-      id: determine_environment
-      run: |
-          if [[ "${{ github.event_name }}" == "workflow_call" ]]; then
-            # Workflow called with an input
-            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            # Workflow called with an input
-            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
-          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            # Determine which directory to process based on modified files
-            MODIFIED_FILES=$(git diff --name-only $GITHUB_BASE_REF $GITHUB_HEAD_REF)
-            echo "$MODIFIED_FILES"
-            if echo "$MODIFIED_FILES" | grep -q '^dev/'; then
-              echo "environment=dev" >> $GITHUB_ENV
-            elif echo "$MODIFIED_FILES" | grep -q '^stg/'; then
-              echo "environment=stg" >> $GITHUB_ENV
-            elif echo "$MODIFIED_FILES" | grep -q '^prod/'; then
-              echo "environment=prod" >> $GITHUB_ENV
-            else
-              echo "Error: No relevant files modified in the pull request." >&2
-              exit 1
-            fi
-          fi
-
+    # - name: Determine Environment
+    #   id: determine_environment
+    #   run: |
+    #       if [[ "${{ github.event_name }}" == "workflow_call" ]]; then
+    #         # Workflow called with an input
+    #         echo "environment=${{ inputs.environment }}" >> $GITHUB_ENV
+    #       elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+    #         # Workflow called with an input
+    #         echo "environment=${{ inputs.environment }}" >> $GITHUB_ENV
+    #       else
+    #         echo "environment=dev" >> $GITHUB_ENV
+    #         echo "Error: No environment has been specified. Setting to dev environment." >&2
+    #       fi
 
     - name: Lint API Definitions
       uses: stoplightio/spectral-action@latest

@@ -1,0 +1,16 @@
+# Tyk Development Workflow -- execute validation, goverance and all platform engineering specific CICD requirements
+# for Tyk developed assets such as APIs and Policies
+name: Tyk Development Workflow
+
+# Execute workflow on dev pull requests
+on:
+    pull_request:
+      branches: [ main ]
+
+jobs:
+    # Run linter and validation workflow
+    tyk-lint:
+        uses: ./.github/workflows/tyk-lint.yml
+        with:
+            environment: stg
+            
