@@ -17,37 +17,15 @@ rules:
       functionOptions:
         match: '^(?!\s*$).+'
 
-  # require-security-config:
-  #   description: APIs must have either JWT or mutualTLS authentication must be enabled
-  #   severity: error
-  #   given: "$"
-  #   then:
-  #     - field: enable_jwt
-  #       function: truthy
-  #       functionOptions:
-  #         truthy:
-  #           - true
-  #       message: Either 'JWT' or 'mutualTLS' must be enabled.
-  #     - field: auth_configs.use_mutual_tls_auth
-  #       function: truthy
-  #       functionOptions:
-  #         truthy:
-  #           - true
-  #       message: Either 'JWT' or 'mutualTLS' must be enabled.
-    # Custom rule logic to ensure that at least one of the fields is true
-    # custom:
-    #   function: |
-    #     function validate(context) {
-    #       const enableJwt = context.targetObj.enable_jwt;
-    #       const mutualTlsAuth = context.targetObj.auth_configs?.use_mutual_tls_auth;
-          
-    #       if (enableJwt !== true && mutualTlsAuth !== true) {
-    #         context.report({
-    #           message: "Either 'JWT' or 'mutualTLS' must be enabled.",
-    #           path: context.path,
-    #         });
-    #       }
-    #     }
-    #     return {
-    #       validate,
-    #     }
+  security-authentication-requirement:
+    description: |
+      The API specification must specify either JWT authentication or mutual TLS authentication
+    message: |
+      Either JWT or mutualTLS authentication must be enabled
+    given: $
+    then:
+      field: $
+      function: pattern
+      functionOptions:
+        pattern: '^(?!.*(enable_jwt: true|auth_configs:.*use_mutual_tls_auth: true)).*'
+      severity: error
