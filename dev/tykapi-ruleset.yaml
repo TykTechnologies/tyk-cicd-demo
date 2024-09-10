@@ -1,5 +1,3 @@
-extends: default
-
 rules:
   no-keyless-auth:
     description: APIs must not be keyless
@@ -37,19 +35,19 @@ rules:
             - true
         message: Either 'JWT' or 'mutualTLS' must be enabled.
     # Custom rule logic to ensure that at least one of the fields is true
-    custom:
-      function: |
-        function validate(context) {
-          const enableJwt = context.targetObj.enable_jwt;
-          const mutualTlsAuth = context.targetObj.auth_configs?.use_mutual_tls_auth;
+    # custom:
+    #   function: |
+    #     function validate(context) {
+    #       const enableJwt = context.targetObj.enable_jwt;
+    #       const mutualTlsAuth = context.targetObj.auth_configs?.use_mutual_tls_auth;
           
-          if (enableJwt !== true && mutualTlsAuth !== true) {
-            context.report({
-              message: "Either 'JWT' or 'mutualTLS' must be enabled.",
-              path: context.path,
-            });
-          }
-        }
-        return {
-          validate,
-        }
+    #       if (enableJwt !== true && mutualTlsAuth !== true) {
+    #         context.report({
+    #           message: "Either 'JWT' or 'mutualTLS' must be enabled.",
+    #           path: context.path,
+    #         });
+    #       }
+    #     }
+    #     return {
+    #       validate,
+    #     }
