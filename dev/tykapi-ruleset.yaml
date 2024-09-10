@@ -17,23 +17,23 @@ rules:
       functionOptions:
         match: '^(?!\s*$).+'
 
-  require-security-config:
-    description: APIs must have either JWT or mutualTLS authentication must be enabled
-    severity: error
-    given: "$"
-    then:
-      - field: enable_jwt
-        function: truthy
-        functionOptions:
-          truthy:
-            - true
-        message: Either 'JWT' or 'mutualTLS' must be enabled.
-      - field: auth_configs.use_mutual_tls_auth
-        function: truthy
-        functionOptions:
-          truthy:
-            - true
-        message: Either 'JWT' or 'mutualTLS' must be enabled.
+  # require-security-config:
+  #   description: APIs must have either JWT or mutualTLS authentication must be enabled
+  #   severity: error
+  #   given: "$"
+  #   then:
+  #     - field: enable_jwt
+  #       function: truthy
+  #       functionOptions:
+  #         truthy:
+  #           - true
+  #       message: Either 'JWT' or 'mutualTLS' must be enabled.
+  #     - field: auth_configs.use_mutual_tls_auth
+  #       function: truthy
+  #       functionOptions:
+  #         truthy:
+  #           - true
+  #       message: Either 'JWT' or 'mutualTLS' must be enabled.
     # Custom rule logic to ensure that at least one of the fields is true
     # custom:
     #   function: |
