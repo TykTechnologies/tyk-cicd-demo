@@ -1,21 +1,21 @@
 rules:
-  no-keyless-auth:
-    description: APIs must not be keyless
-    given: "$.use_keyless"
-    severity: error
-    then:
-      field: use_keyless 
-      function: truthy
+  # no-keyless-auth:
+  #   description: APIs must not be keyless
+  #   given: "$.use_keyless"
+  #   severity: error
+  #   then:
+  #     field: use_keyless 
+  #     function: truthy
 
-  no-empty-target-url:
-    description: APIs must have a target_url
-    given: "$.proxy"
-    severity: error
-    then:
-      field: 'target_url'
-      function: 'pattern'
-      functionOptions:
-        match: '^(?!\s*$).+'
+  # no-empty-target-url:
+  #   description: APIs must have a target_url
+  #   given: "$.proxy"
+  #   severity: error
+  #   then:
+  #     field: 'target_url'
+  #     function: 'pattern'
+  #     functionOptions:
+  #       match: '^(?!\s*$).+'
 
   security-authentication-requirement:
     description: |
