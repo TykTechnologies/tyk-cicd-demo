@@ -58,7 +58,7 @@ jobs:
       uses: stoplightio/spectral-action@latest
       with:
         file_glob: ${{ env.environment }}/apis/api-*.json
-        spectral_ruleset: dev/tykapi-ruleset.yaml
+        spectral_ruleset: ${{ env.environment }}/tykapi-ruleset.yaml
       continue-on-error: false
 
     # # Install JQ library used to introspect the API and Policy definitions
