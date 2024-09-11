@@ -8,7 +8,7 @@
     "enable_proxy_protocol": false,
     "api_id": "2399f2e90953469d50245a7e1c77813e",
     "org_id": "5e9d9544a1dcd60001d0ed20",
-    "use_keyless": true,
+    "use_keyless": false,
     "use_oauth2": false,
     "use_openid": false,
     "openid_options": {
@@ -202,7 +202,7 @@
     "client_certificates": [],
     "upstream_certificates": {},
     "pinned_public_keys": {},
-    "enable_jwt": false,
+    "enable_jwt": true,
     "use_standard_auth": true,
     "use_go_plugin_auth": false,
     "enable_coprocess_auth": false,
