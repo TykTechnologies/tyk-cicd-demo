@@ -18,12 +18,13 @@ rules:
         match: '^(?!\s*$).+'
 
   check-auth-settings:
-    description: Ensure either `enable_jwt` or `use_mutual_tls_auth` is set to true
-    message: "Either `enable_jwt` or `use_mutual_tls_auth` must be set to true."
-    severity: error
-    given: "$.api_definition"
+    description: 'Either enable_jwt or use_mutual_tls_auth must be true'
+    message: 'Either enable_jwt or use_mutual_tls_auth must be set to true.'
+    given: '$'
     then:
-      function: falsy
-      field: "enable_jwt"
-      or:
-        - field: "use_mutual_tls_auth"
+      anyOf:
+        - path: '$.enable_jwt'
+          condition: 'true'
+        - path: '$.use_mutual_tls_auth'
+          condition: 'true'
+    severity: error
