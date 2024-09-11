@@ -1,7 +1,7 @@
 rules:
   no-keyless-auth:
     description: APIs must not be keyless
-    given: "$.use_keyless"
+    given: "$.api_definition"
     severity: error
     then:
       field: use_keyless 
@@ -9,7 +9,7 @@ rules:
 
   no-empty-target-url:
     description: APIs must have a target_url
-    given: "$.proxy"
+    given: "$.api_definition.proxy"
     severity: error
     then:
       field: 'target_url'
@@ -21,7 +21,7 @@ rules:
     description: Ensure either `enable_jwt` or `use_mutual_tls_auth` is set to true
     message: "Either `enable_jwt` or `use_mutual_tls_auth` must be set to true."
     severity: error
-    given: "$"
+    given: "$.api_definition"
     then:
       function: "truthy"
       field: "enable_jwt"
