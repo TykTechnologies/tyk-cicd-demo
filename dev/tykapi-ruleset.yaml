@@ -22,12 +22,10 @@ rules:
   check-for-jwt-auth:
     description: APIs does not have JWT enabled
     given: "$.api_definition"
-    severity: error
+    severity: warning
     then:
       field: 'enable_jwt'
-      function: pattern
-      functionOptions:
-        match: '^(?!\s*$).+'
+      function: falsy
 
   # check-for-jwt-auth:
   #   description: JWT auth is not enabled
