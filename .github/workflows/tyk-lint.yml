@@ -72,10 +72,10 @@ jobs:
     # Tyk API Linting / Validation using JQ Library
     - name: Tyk Linter for Auth Mechanism Validation
       env:
-          ENVIRONMENT: ${{ env.environment }}
+          ENV: ${{ env.environment }}
       run: |
-        cd `./$ENVIRONMENT/apis`
-        for file in $(find . -name "*.json"); do
+        cd "./$ENV"
+        for file in $(find . -name "*.json" ! -name ".tyk.json"); do
             # echo "Validating API/Policy definition $file"
             # # Check if target_url is valid and not empty
             # if jq -e '.proxy.target_url | length > 0' "$file" > /dev/null; then
