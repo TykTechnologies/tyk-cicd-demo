@@ -1,5 +1,5 @@
-# Tyk Development Workflow -- execute validation, goverance and all platform engineering specific CICD requirements
-# for Tyk developed assets such as APIs and Policies
+# Tyk developer pipeline -- perform validation and linting of API definitions and policies if needed for dev env APIs.
+# This dev workflow will triggered if any PRs have been made specifically to the dev directory.
 name: Tyk Development Workflow
 
 # Execute workflow on dev pull requests

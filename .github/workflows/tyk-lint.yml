@@ -62,7 +62,7 @@ jobs:
           fi
     
     # Tyk API Linting / Validation using Github Action Library
-    - name: Tyk Linter for Field Validation
+    - name: Lint / validation required field values
       uses: stoplightio/spectral-action@latest
       with:
         file_glob: ${{ env.environment }}/apis/api-*.json
@@ -70,7 +70,7 @@ jobs:
       continue-on-error: false
 
     # Tyk API Linting / Validation using JQ Library
-    - name: Tyk Linter for Auth Mechanism Validation
+    - name: Lint / validate required auth mechanisms
       env:
           ENV: ${{ env.environment }}
       run: |
