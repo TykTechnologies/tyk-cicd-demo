@@ -54,11 +54,19 @@ jobs:
           fi
     
     # Tyk API Linting and Validation using Spectral and Stoplight
-    - name: Lint API Definitions
+    - name: Check for required fields
       uses: stoplightio/spectral-action@latest
       with:
         file_glob: ${{ env.environment }}/apis/api-*.json
         spectral_ruleset: ${{ env.environment }}/tykapi-ruleset.yaml
+      continue-on-error: false
+
+    # Tyk API Linting and Validation using Spectral and Stoplight
+    - name: Check for available authentication mechanisms
+      uses: stoplightio/spectral-action@latest
+      with:
+        file_glob: ${{ env.environment }}/apis/api-*.json
+        spectral_ruleset: ${{ env.environment }}/tykapi-auth-ruleset.yaml
       continue-on-error: false
 
     # # Install JQ library used to introspect the API and Policy definitions
