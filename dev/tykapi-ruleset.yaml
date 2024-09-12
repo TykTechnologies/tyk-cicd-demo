@@ -9,23 +9,23 @@ rules:
       field: use_keyless 
       function: falsy
 
-  no-empty-target-url:
-    description: APIs must have a target_url
-    given: "$.api_definition.proxy"
-    severity: error
-    then:
-      field: 'target_url'
-      function: 'pattern'
-      functionOptions:
-        match: '^(?!\s*$).+'
-
-  # check-for-jwt-auth:
-  #   description: JWT auth is not enabled
-  #   given: "$.api_definition"
-  #   severity: warning
+  # no-empty-target-url:
+  #   description: APIs must have a target_url
+  #   given: "$.api_definition.proxy"
+  #   severity: error
   #   then:
-  #     field: enable_jwt 
-  #     function: falsy
+  #     field: 'target_url'
+  #     function: 'pattern'
+  #     functionOptions:
+  #       match: '^(?!\s*$).+'
+
+  check-for-jwt-auth:
+    description: JWT auth is not enabled
+    given: "$.api_definition"
+    severity: warning
+    then:
+      field: enable_jwt 
+      function: falsy
 
   # check-for-mtls-auth:
   #   description: MutualTLS is not enabled
