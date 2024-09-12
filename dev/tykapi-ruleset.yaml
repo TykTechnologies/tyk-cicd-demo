@@ -20,12 +20,16 @@ rules:
         match: '^(?!\s*$).+'
   
   check-for-jwt-auth:
-    description: APIs does not have JWT enabled
+    description: "At least one of 'enable_jwt' or 'use_mutual_tls_auth' must be true."
     given: "$.api_definition"
-    severity: warning
     then:
-      field: 'enable_jwt'
-      function: falsy
+      - condition: "truthy"
+        field: "enable_jwt"
+        or:
+          - condition: "truthy"
+            field: "use_mutual_tls_auth"
+    severity: error
+    message: "At least one of 'api_definition.enable_jwt' or 'api_definition.use_mutual_tls_auth' must be true."
 
   # check-for-jwt-auth:
   #   description: JWT auth is not enabled
