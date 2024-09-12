@@ -7,6 +7,4 @@ rules:
     severity: error
     then:
       field: 'enable_jwt'
-      function: pattern
-      functionOptions:
-        match: '^(?!\s*$).+'
+      function: falsy

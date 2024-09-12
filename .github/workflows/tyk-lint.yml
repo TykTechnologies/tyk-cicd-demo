@@ -62,7 +62,7 @@ jobs:
       continue-on-error: false
 
     # Tyk API Linting and Validation using Spectral and Stoplight
-    - name: Check for available authentication mechanisms
+    - name: Validate authentication mechanisms
       uses: stoplightio/spectral-action@latest
       with:
         file_glob: ${{ env.environment }}/apis/api-*.json
