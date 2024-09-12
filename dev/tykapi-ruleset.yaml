@@ -1,5 +1,3 @@
-extends: 'spectral:oas'
-
 rules:
   no-keyless-auth:
     description: APIs must not be keyless
