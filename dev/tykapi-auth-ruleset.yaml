@@ -5,10 +5,9 @@ rules:
     description: "At least one of 'enable_jwt' or 'use_mutual_tls_auth' must be true."
     given: "$.api_definition"
     then:
-      - condition: "truthy"
-        field: "enable_jwt"
-        or:
-          - condition: "truthy"
-            field: "use_mutual_tls_auth"
+      - field: 'enable_jwt'
+        function: truthy
+      - field: 'use_mutual_tls_auth'
+        function: truthy
     severity: error
     message: "At least one of 'api_definition.enable_jwt' or 'api_definition.use_mutual_tls_auth' must be true."
