@@ -47,7 +47,7 @@ jobs:
         jq --version
     
     # Determine the environment to lint run linter against
-    - name: Determine Environment
+    - name: 'Determine Environment'
       id: determine_environment
       run: |
           if [[ "${{ github.event_name }}" == "workflow_call" ]]; then
@@ -62,7 +62,7 @@ jobs:
           fi
     
     # Tyk API Linting / Validation using Github Action Library
-    - name: Lint / validation required field values
+    - name: 'Linter / validation using Spectral / Stoplight'
       uses: stoplightio/spectral-action@latest
       with:
         file_glob: ${{ env.environment }}/apis/api-*.json
@@ -70,10 +70,10 @@ jobs:
       continue-on-error: false
 
     # Tyk API Linting / Validation using JQ Library
-    - name: Lint / validate required auth mechanisms
+    - name: 'Linter / validation using JQ'
       env: 
         DIRECTORY: "./infrastructure/${{ env.environment }}/apis/"
-        ENV: ${{ env.environment }}
+        CURR_ENV: ${{ env.environment }}
       run: |
         chmod +x ./.github/scripts/validate_fields.sh
         ./.github/scripts/validate_fields.sh

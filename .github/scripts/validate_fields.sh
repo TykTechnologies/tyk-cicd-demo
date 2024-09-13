@@ -1,15 +1,19 @@
 #!/bin/bash
 
 # Ensure the ENV environment variable is set
-if [ -z "$DIRECTORY" ]; then
-  echo "Error: ENV environment variable is not set."
-  exit 1
+if [ -z "$CURR_ENV" ]; then
+    echo "Error: ENV environment variable has been set to $CURR_ENV."
+    exit 1
+else
+    echo "Info: ENV environment variable has been set to $DIRECTORY."
 fi
 
 # Ensure the DIRECTORY environment variable is set
 if [ -z "$DIRECTORY" ]; then
-  echo "Error: DIRECTORY environment variable is not set."
-  exit 1
+    echo "Error: DIRECTORY environment variable is not set."
+    exit 1
+else
+    echo "Info: DIRECTORY environment variable has been set to $DIRECTORY."
 fi
 
 for file in $(find . -name "*.json" ! -name ".tyk.json"); do
@@ -25,7 +29,7 @@ for file in $(find . -name "*.json" ! -name ".tyk.json"); do
     # fi
     
     # Check if either JWT auth or or MutuatTLS is enabled
-    echo "Validating if the available authentication mechanisms are enabled"
+    echo "Validating if the correct authentication mechanisms are enabled"
     if jq -e '.api_definition.enable_jwt == true or .api_definition.auth_configs.use_mutual_tls_auth == true' "$file" > /dev/null; then
         echo "$file has either JWT auth or MutualTLS auth set to true."
     else
