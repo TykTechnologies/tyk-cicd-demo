@@ -71,29 +71,9 @@ jobs:
 
     # Tyk API Linting / Validation using JQ Library
     - name: Lint / validate required auth mechanisms
-      env:
-          ENV: ${{ env.environment }}
+      env: 
+        DIRECTORY: "./infrastructure/${{ env.environment }}/apis/"
+        ENV: ${{ env.environment }}
       run: |
-        cd "./$ENV"
-        for file in $(find . -name "*.json" ! -name ".tyk.json"); do
-            # echo "Validating API/Policy definition $file"
-            # # Check if target_url is valid and not empty
-            # if jq -e '.proxy.target_url | length > 0' "$file" > /dev/null; then
-            #   echo "$file contains a valid proxy.target_url."
-            #   target_url=$(jq -r '.proxy.target_url' "$file")
-            #   echo "proxy.target_url: $target_url"
-            # else
-            #   echo "$file does NOT contain a valid proxy.target_url."
-            #   exit 1
-            # fi
-            
-            # Check if either JWT auth or or MutuatTLS is enabled
-            echo "Validating if the appropriate authentication mechanisms are selected"
-            if jq -e '.api_definition.enable_jwt == true or .api_definition.auth_configs.use_mutual_tls_auth == true' "$file" > /dev/null; then
-              echo "$file has either enable_jwt or auth_configs.use_mutual_tls_auth set to true."
-            else
-              echo "$file does NOT have either enable_jwt or auth_configs.use_mutual_tls_auth set to true."
-              exit 1
-            fi
-            
-          done
+        chmod +x ./.github/scripts/validate_fields.sh
+        ./.github/scripts/validate_fields.sh
