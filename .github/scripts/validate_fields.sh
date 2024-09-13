@@ -5,7 +5,7 @@ if [ -z "$CURR_ENV" ]; then
     echo "Error: ENV environment variable has been set to $CURR_ENV."
     exit 1
 else
-    echo "Info: ENV environment variable has been set to $DIRECTORY."
+    echo "Info: ENV environment variable has been set to $CURR_ENV."
 fi
 
 # Ensure the DIRECTORY environment variable is set
