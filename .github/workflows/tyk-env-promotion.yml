@@ -2,9 +2,17 @@ name: Tyk assets environment promotion
 
 # Perform the env promotion only on push to main branch
 on:
-    push:
-      branches: [ main ]
-
+  workflow_dispatch:
+    inputs:
+      environment: 
+        type: choice
+        options:
+          - stg
+          - prod
+  workflow_call:
+    inputs:
+      environment:
+        type: string
 jobs:
     env-promotion:
         runs-on: ubuntu-latest
