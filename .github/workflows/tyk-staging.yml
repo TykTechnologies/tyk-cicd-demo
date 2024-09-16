@@ -144,6 +144,9 @@ jobs:
 
         git branch
         git status
+        
+        # Check out the current pull request branch
+        git checkout ${{ github.head_ref }}
 
         # Add changes
         git add .
@@ -156,7 +159,7 @@ jobs:
           git commit -m "Copy files from staging to production"
         
           # Push changes
-          git push
+          git push origin ${{ github.head_ref }}
         fi
   
   # Run linter and validation workflow
