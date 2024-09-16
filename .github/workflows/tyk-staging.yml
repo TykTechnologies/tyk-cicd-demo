@@ -131,18 +131,26 @@ jobs:
         #   fi
         # done
 
-    # List repo content post sub
-    - name: 'List Repository Contents Post-Substitution'
-      run: |
-        pwd
-        ls -la
-
-    # Run linter and validation workflow
+    # # List repo content post sub
+    # - name: 'List Repository Contents Post-Substitution'
+    #   run: |
+    #     pwd
+    #     ls .github/ -la
+  
+  # Run linter and validation workflow
+  tyk-lint:
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: Run Linter for Staging Environment
       uses: ./.github/workflows/tyk-lint.yml
       with:
-          environment: 'stg'
+        environment: 'stg'
 
+  commit-stg-tyk-assets:
+    runs-on: ubuntu-latest
+    
+    steps:
     # Check for modified files
     - name: Commit and Push Changes
       run: |
