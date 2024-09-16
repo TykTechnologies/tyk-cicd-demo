@@ -4,6 +4,7 @@ name: Generate Production Tyk Assets
 # Perform the env promotion only on push to main branch
 on:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write

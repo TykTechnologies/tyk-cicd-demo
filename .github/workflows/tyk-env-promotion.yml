@@ -9,10 +9,7 @@ on:
         options:
           - stg
           - prod
-  workflow_call:
-    inputs:
-      environment:
-        type: string
+          
 jobs:
     env-promotion:
         runs-on: ubuntu-latest

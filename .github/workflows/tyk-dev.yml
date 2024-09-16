@@ -14,3 +14,13 @@ jobs:
         uses: ./.github/workflows/tyk-lint.yml
         with:
             environment: 'dev'
+    
+    # Set up staging APIs and Policies if the Dev assets pass the linter / validation
+    tyk-set-up-staging:
+        needs: tyk-lint
+        uses: ./.github/workflows/tyk-staging.yml
+    
+    # Set up prod APIs and Policies if the Dev assets pass the linter / validation
+    tyk-set-up-prod:
+        needs: tyk-set-up-staging
+        uses: ./.github/workflows/tyk-production.yml

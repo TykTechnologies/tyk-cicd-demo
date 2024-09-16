@@ -5,11 +5,7 @@ name: Generate Staging Tyk Assets
 # Perform the env promotion only on push to main branch
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'dev/**'
-    branches: 
-      - main
+  workflow_call:
 
 jobs:
   # Set up staging assets
@@ -135,7 +131,7 @@ jobs:
         # done
 
     # Run linter and validation workflow
-    - name: Staging Linter
+    - name: Run Linter for Staging Environment
       uses: ./.github/workflows/tyk-lint.yml
       with:
           environment: 'stg'
@@ -170,9 +166,3 @@ jobs:
         git add .
         git commit -am "CI: Update staging assets"
         git push
-
-  # Promote to staging env
-  tyk-env-promotion:
-    uses: ./.github/workflows/tyk-env-promotion.yml
-    with:
-        environment: 'stg'
