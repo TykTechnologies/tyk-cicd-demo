@@ -5,9 +5,10 @@ name: Generate Staging Tyk Assets
 # Perform the env promotion only on push to main branch
 on:
     push:
-      branches: [ TargetURL-Replacement ]
+      branches: [ main ]
 
 jobs:
+  # Set up staging assets
   set-up-stg-tyk-assets:
     runs-on: ubuntu-latest
     
@@ -56,7 +57,7 @@ jobs:
           new_file="stg-$(basename "$file")"
           # Replace proxy.target_url with the GitHub secret value and write to the new file
           echo ${{secrets.STG_US_PROXY_TARGET_URL}} | sed 's/./& /g'
-          jq --arg url "$STG_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "../stg/$new_file"
+          jq --arg url "$STG_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "../stg/apis/$new_file"
           echo "Updated target_url in $new_file"
         done
         # List the content that exists within the repo to validate the files
@@ -69,6 +70,7 @@ jobs:
         # cd ./stg
         # ls -la
         # pwd
+        # Tyk Classic API Definitions
         for file in $(find . -name "stg-api*.json"); do
           echo "Adding config_data to Tyk Classic API Definition: $file"
           #echo "Config_Data Before:"
@@ -79,6 +81,7 @@ jobs:
           mv tmp_api.json $file
           echo "Updated config_data in $file"
         done
+        # OAS Definitions
         # for file in $(find . -name "stg*oas*.json"); do
         #   echo "Processing Tyk OAS Definitions"
         #   # Create a new file path in the stg directory with a stg- prefix
@@ -98,6 +101,7 @@ jobs:
         STG_US_MTLS_ROOT_CERT: ${{ secrets.STG_US_MTLS_ROOT_CERT }}
       run: |
         cd ./stg
+        # Tyk Classic API Definitions
         for file in $(find . -name "stg-api*.json"); do
           mtls_api=$(jq '.api_definition.use_mutual_tls_auth' $file)
           if [ "$mtls_api" = "true" ]; then
@@ -107,7 +111,7 @@ jobs:
             echo "Updated root cert(s) in $file"
           fi
         done
-        #OAS
+        # OAS Definitions
         # for file in $(find . -name "*oas*.json"); do
         #   echo "Processing Tyk OAS Definitions"
         #   # Create a new file path in the stg directory with a stg- prefix
@@ -156,3 +160,9 @@ jobs:
         git add .
         git commit -am "CI: Update staging assets"
         git push
+
+  # Promote to staging env
+  tyk-env-promotion:
+    uses: ./.github/workflows/tyk-env-promotion.yml
+    with:
+        environment: 'stg'
