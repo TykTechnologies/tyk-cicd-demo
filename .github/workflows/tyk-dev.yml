@@ -1,16 +1,31 @@
-# Tyk developer pipeline -- perform validation and linting of API definitions and policies if needed for dev env APIs.
-# This dev workflow will triggered if any PRs have been made specifically to the dev directory.
-name: Tyk Development Workflow
+# Basic env promotion with GH secret store substituion triggered on successful PR reviews and approval with a push to main branch.
+# This workflow will substitution env specific values for both dev and prod and deploy them as required.
+name: Generate Development Tyk Assets
 
-# Execute workflow on dev pull requests
+# Perform the env promotion only on push to main branch
 on:
-    pull_request:
-        paths:
-            - 'dev/**'
+  workflow_dispatch:
+  workflow_call:
 
 jobs:
-    # Run linter and validation workflow
-    tyk-lint:
-        uses: ./.github/workflows/tyk-lint.yml
-        with:
-            environment: 'dev'
+  # Set up development assets
+  set-up-dev-tyk-assets:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Check out the current repo and fetch only the current commits (JTBD)
+    - name: 'Checkout Repository'
+      uses: actions/checkout@v4
+
+    # List the content that exists within the repo to validate the files
+    - name: 'List Repository Contents'
+      run: |
+        cd dev
+        ls -Rla
+    
+  # Run linter and validation workflow
+  tyk-lint:
+    needs: set-up-dev-tyk-assets
+    uses: ./.github/workflows/tyk-lint.yml
+    with:
+        environment: 'dev'

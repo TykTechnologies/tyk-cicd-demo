@@ -413,7 +413,13 @@
     "certificates": [],
     "do_not_track": false,
     "enable_context_vars": false,
-    "config_data": {},
+    "config_data": {
+      "routes": {
+        "default": "https://stg.httpbin.com",
+        "stg1": "https://stg1.httpbin.com",
+        "stg2": "https://stg2.httpbin.com"
+      }
+    },
     "config_data_disabled": false,
     "tag_headers": [],
     "global_rate_limit": {
@@ -478,5 +484,8 @@
   "is_site": false,
   "sort_by": 0,
   "user_group_owners": [],
-  "user_owners": []
+  "user_owners": [],
+  "proxy": {
+    "target_url": "http://httpbin.org/get?env=stg"
+  }
 }

@@ -1,6 +1,13 @@
 # tyk-cicd-dev-demo
 Demo of CICD using Tyk Sync and GH Actions
+Configuration Example
+```
+STG_US_CONFIG_DATA={\"routes\": {\"default\": \"https://stg.httpbin.com\",\"stg1\": \"https://stg1.httpbin.com\",\"stg2\": \"https://stg2.httpbin.com\"}}
+STG_US_PROXY_TARGET_URL=http://httpbin.org/get?env=stg
 
+PROD_US_CONFIG_DATA={\"routes\": {\"default\": \"https://prod.httpbin.com\",\"prod1\": \"https://prod1.httpbin.com\",\"prod2\": \"https://prod2.httpbin.com\"}}
+PROD_US_PROXY_TARGET_URL=http://httpbin.org/get?env=prod
+```
 
 Tyk Sync Dump Command Example
 ```
