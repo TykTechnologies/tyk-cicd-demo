@@ -145,11 +145,16 @@ jobs:
         git branch
         git status
         
-        # Check out the current pull request branch
+        # Fetch the branch for the pull request
+        git fetch origin ${{ github.head_ref }}
+        # Check out the branch
         git checkout ${{ github.head_ref }}
 
         # Add changes
         git add .
+
+        git status
+
 
         # Check if there are changes to commit
         if git diff --cached --quiet; then
