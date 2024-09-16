@@ -76,9 +76,9 @@ jobs:
           # echo "Config_Data Before:"
           # jq '.api_definition.config_data' $file
           # echo "Replacing with:"
-          echo ${{ secrets.STG_US_CONFIG_DATA }}  | sed 's/./& /g'
-          echo ${{ secrets.STG_US_CONFIG_DATA }} 
-          jq --arg config_data "${{ secrets.STG_US_CONFIG_DATA }}" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
+          # echo ${{ secrets.STG_US_CONFIG_DATA }}  | sed 's/./& /g'
+          # echo ${{ secrets.STG_US_CONFIG_DATA }} 
+          jq --arg config_data "$STG_US_CONFIG_DATA" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
           mv tmp_api.json $file
           echo "Updated config_data in $file"
         done
@@ -146,24 +146,22 @@ jobs:
     #     ls -la
 
     # Check for modified files
-    - name: Check for modified files
-      id: git-check
+    - name: Commit and Push Changes
       run: |
-        if [ -n "$(git status --porcelain)" ]; then
-          echo "modified=true" >> $GITHUB_ENV
-        else
-          echo "modified=false" >> $GITHUB_ENV
-        fi
+        # Configure Git
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-    # Push changes to remote repository
-    - name: Commit and push changes
-      if: env.modified == 'true'
-      env:
-        ACTOR_NAME: ${{ github.actor }}
-        ACTOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
-      run: |
-        git config --global user.name "$ACTOR_NAME"
-        git config --global user.email "$ACTOR_EMAIL"
+        # Add changes
         git add .
-        git commit -am "CI: Update staging assets"
-        git push
+
+        # Check if there are changes to commit
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+        else
+          # Commit changes
+          git commit -m "Copy files from staging to production"
+        
+          # Push changes
+          git push
+        fi
