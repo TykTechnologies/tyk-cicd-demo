@@ -415,9 +415,9 @@
     "enable_context_vars": false,
     "config_data": {
       "routes": {
-        "default": "https://stg.httpbin.com",
-        "stg1": "https://stg1.httpbin.com",
-        "stg2": "https://stg2.httpbin.com"
+        "default": "https://prod.httpbin.com",
+        "prod1": "https://prod1.httpbin.com",
+        "prod2": "https://prod2.httpbin.com"
       }
     },
     "config_data_disabled": false,
@@ -486,6 +486,6 @@
   "user_group_owners": [],
   "user_owners": [],
   "proxy": {
-    "target_url": "http://httpbin.org/get?env=stg"
+    "target_url": "http://httpbin.org/get?env=prod"
   }
 }
