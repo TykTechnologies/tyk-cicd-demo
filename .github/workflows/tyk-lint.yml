@@ -4,10 +4,6 @@ name: Tyk Schema Validation / Linter
 
 # Perform the Tyk schema validation only on PR requests
 on:
-  pull_request:
-    paths:
-      - 'stg/**'
-      - 'prod/**'
   workflow_dispatch:
     inputs:
       environment: 

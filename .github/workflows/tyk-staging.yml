@@ -130,6 +130,12 @@ jobs:
         #   fi
         # done
 
+    # Run linter and validation workflow
+    - name: Staging Linter
+      uses: ./.github/workflows/tyk-lint.yml
+      with:
+          environment: 'stg'
+
     # List repo content post sub
     # - name: 'List Repository Contents Post-Substitution'
     #   run: |
