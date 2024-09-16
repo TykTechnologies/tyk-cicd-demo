@@ -1,7 +1,7 @@
 {
   "api_definition": {
     "id": "66e1f6076e83c700014095a8",
-    "name": "httpbin-v3",
+    "name": "httpbin-v5",
     "slug": "temp",
     "listen_port": 0,
     "protocol": "",
