@@ -143,6 +143,7 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
         git branch
+        git status
 
         # Add changes
         git add .
