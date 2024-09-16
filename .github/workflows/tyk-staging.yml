@@ -155,14 +155,14 @@ jobs:
         fi
 
     # Push changes to remote repository
-    - name: Commit changes
+    - name: Commit and push changes
       if: env.modified == 'true'
       env:
-        ORG_NAME: ${{ secrets.ORG_NAME }}
-        ORG_EMAIL: ${{ secrets.ORG_EMAIL }}
+        ACTOR_NAME: ${{ github.actor }}
+        ACTOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
       run: |
-        git config --global user.name "$ORG_NAME"
-        git config --global user.email "$ORG_EMAIL"
+        git config --global user.name "$ACTOR_NAME"
+        git config --global user.email "$ACTOR_EMAIL"
         git add .
         git commit -am "CI: Update staging assets"
         git push
