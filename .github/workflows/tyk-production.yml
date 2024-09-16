@@ -139,17 +139,21 @@ jobs:
         # Configure Git
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-        git branch
-        git status
         
         # Fetch the branch for the pull request
         git fetch origin ${{ github.head_ref }}
         # Check out the branch
         git checkout ${{ github.head_ref }}
 
+        # Check current branch
+        git branch
+
+        # Pull latest changes
+        git pull
+
         # Add changes
         git add .
+        git status
 
         # Check if there are changes to commit
         if git diff --cached --quiet; then
