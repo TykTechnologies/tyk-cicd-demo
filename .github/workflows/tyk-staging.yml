@@ -76,7 +76,7 @@ jobs:
           #echo "Config_Data Before:"
           #jq '.api_definition.config_data' $file
           #echo "Replacing with:"
-          #echo $STG_US_CONFIG_DATA | sed 's/./& /g'
+          echo $STG_US_CONFIG_DATA | sed 's/./& /g'
           jq --arg config_data "$STG_US_CONFIG_DATA" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
           mv tmp_api.json $file
           echo "Updated config_data in $file"
