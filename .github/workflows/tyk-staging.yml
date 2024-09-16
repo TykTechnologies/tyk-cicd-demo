@@ -78,7 +78,7 @@ jobs:
           #echo "Replacing with:"
           echo $STG_US_CONFIG_DATA | sed 's/./& /g'
           cat $file
-          jq --arg config_data "$STG_US_CONFIG_DATA" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
+          jq --arg config_data '{"routes": {"default": "https://stg.httpbin.com","stg1": "https://stg1.httpbin.com","stg2": "https://stg2.httpbin.com"}}' '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
           mv tmp_api.json $file
           echo "Updated config_data in $file"
         done
