@@ -79,7 +79,7 @@ jobs:
           echo ${{ secrets.STG_US_CONFIG_DATA }}  | sed 's/./& /g'
           echo ${{ secrets.STG_US_CONFIG_DATA }} 
           echo "${{ secrets.HELLO_WORLD }}"
-          jq --arg config_data "${{ secrets.STG_US_CONFIG_DATA }}" '.api_definition.config_data = ($jq | fromjson)' "$file" > tmp_api.json
+          jq --arg config_data "${{ secrets.STG_US_CONFIG_DATA }}" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
           mv tmp_api.json $file
           echo "Updated config_data in $file"
         done
