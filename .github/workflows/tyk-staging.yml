@@ -136,23 +136,7 @@ jobs:
     #   run: |
     #     pwd
     #     ls .github/ -la
-  
-  # Run linter and validation workflow
-  tyk-lint:
-    needs: set-up-stg-tyk-assets
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Run Linter for Staging Environment
-      uses: ./.github/workflows/tyk-lint.yml
-      with:
-        environment: 'stg'
 
-  commit-stg-tyk-assets:
-    needs: tyk-lint
-    runs-on: ubuntu-latest
-    
-    steps:
     # Check for modified files
     - name: Commit and Push Changes
       run: |
@@ -173,3 +157,10 @@ jobs:
           # Push changes
           git push
         fi
+  
+  # Run linter and validation workflow
+  tyk-lint:
+    needs: set-up-stg-tyk-assets
+    uses: ./.github/workflows/tyk-lint.yml
+    with:
+        environment: 'stg'
