@@ -5,7 +5,7 @@ name: Generate Staging Tyk Assets
 # Perform the env promotion only on push to main branch
 on:
     push:
-      branches: [ main ]
+      branches: [ TargetURL-Replacement ]
 
 jobs:
   set-up-stg-tyk-assets:
@@ -23,6 +23,8 @@ jobs:
       run: |
         ls -la
         pwd
+        cd dev
+        ls -la
     
     # Install JQ library used to introspect the API and Policy definitions
     - name: 'Install JQ Library'
@@ -48,14 +50,89 @@ jobs:
         STG_US_PROXY_TARGET_URL: ${{ secrets.STG_US_PROXY_TARGET_URL }}
       run: |
         cd ./dev
-        for file in $(find . -name "*.json"); do
-          echo "Processing $file"
+        for file in $(find . -name "api*.json"); do
+          echo "Processing Tyk Classic API Definition: $file"
           # Create a new file path in the stg directory with a stg- prefix
           new_file="stg-$(basename "$file")"
           # Replace proxy.target_url with the GitHub secret value and write to the new file
+          echo ${{secrets.STG_US_PROXY_TARGET_URL}} | sed 's/./& /g'
           jq --arg url "$STG_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "../stg/$new_file"
-          echo "Updated proxy.target_url in $new_file"
+          echo "Updated target_url in $new_file"
         done
+        # List the content that exists within the repo to validate the files
+    
+    # Substitute config_data with Stg Version
+    - name: Replace config_data with Stg Version
+      env:
+        STG_US_CONFIG_DATA: ${{ secrets.STG_US_CONFIG_DATA }}
+      run: |
+        # cd ./stg
+        # ls -la
+        # pwd
+        for file in $(find . -name "stg-api*.json"); do
+          echo "Adding config_data to Tyk Classic API Definition: $file"
+          #echo "Config_Data Before:"
+          #jq '.api_definition.config_data' $file
+          #echo "Replacing with:"
+          #echo $STG_US_CONFIG_DATA | sed 's/./& /g'
+          jq --arg config_data "$STG_US_CONFIG_DATA" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
+          mv tmp_api.json $file
+          echo "Updated config_data in $file"
+        done
+        # for file in $(find . -name "stg*oas*.json"); do
+        #   echo "Processing Tyk OAS Definitions"
+        #   # Create a new file path in the stg directory with a stg- prefix
+        #   new_file="stg-$(basename "$file")"
+        #   echo "Config_Data Before:"
+        #   cat $file | jq '.oas["x-tyk-api-gateway"].middleware.global.pluginConfig.data.value'
+        #   #echo "Replacing with:"
+        #   #cat $STG_US_CONFIG_DATA
+        #   #cat $STG_US_CONFIG_DATA | sed 's/./& /g'
+        #   jq --arg config_data "$STG_US_CONFIG_DATA" '.oas["x-tyk-api-gateway"].middleware.global.pluginConfig.data.value = ($config_data | fromjson)' "$file" > tmp_api.json  mv temp.oas $file 
+        #   # "../stg/$new_file"
+        # done
+
+    # Substitute mTLS Root Certificate(s) with Stg Version
+    - name: Replace mTLS Root Certificates(s) with Stg Version
+      env:
+        STG_US_MTLS_ROOT_CERT: ${{ secrets.STG_US_MTLS_ROOT_CERT }}
+      run: |
+        cd ./stg
+        for file in $(find . -name "stg-api*.json"); do
+          mtls_api=$(jq '.api_definition.use_mutual_tls_auth' $file)
+          if [ "$mtls_api" = "true" ]; then
+            echo "Adding root cert(s) to Tyk Classic Definition: $file"
+            jq --arg root_cert "$STG_US_MTLS_ROOT_CERT" '.api_definition.client_certificates = ($root_cert)' "$file" > tmp_api.json
+            mv tmp_api.json $file
+            echo "Updated root cert(s) in $file"
+          fi
+        done
+        #OAS
+        # for file in $(find . -name "*oas*.json"); do
+        #   echo "Processing Tyk OAS Definitions"
+        #   # Create a new file path in the stg directory with a stg- prefix
+        #   # new_file="stg-$(basename "$file")"
+        #   # Check if .oas["x-tyk-api-gateway"].server.clientCertificates.enabled is true
+        #   ENABLED=$(jq '.oas["x-tyk-api-gateway"].server.clientCertificates.enabled' "$file")
+        #   echo $ENABLED
+        #   if [ "$ENABLED" = "true" ]; then
+        #     echo "Certificate AllowList Before:"
+        #     cat $file | jq '.oas["x-tyk-api-gateway"].server.clientCertificates.allowlist'
+        #     echo "Replacing with:"
+        #     echo $STG_US_MTLS_ROOT_CERT | sed 's/./& /g'
+        #     jq --arg root_cert "$STG_US_MTLS_ROOT_CERT" '.oas["x-tyk-api-gateway"].server.clientCertificates.allowlist = ($root_cert | fromjson)' "$file" > tmp.json && mv tmp.json $file
+        #   else
+        #     echo "Client Certificates are not enabled. No changes made."
+        #   fi
+        # done
+
+    # List repo content post sub
+    # - name: 'List Repository Contents Post-Substitution'
+    #   run: |
+    #     cd stg
+    #     pwd
+    #     cat stg*.json | grep "target_url"
+    #     ls -la
 
     # Check for modified files
     - name: Check for modified files
