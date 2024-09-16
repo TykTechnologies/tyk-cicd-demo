@@ -4,8 +4,12 @@ name: Generate Staging Tyk Assets
 
 # Perform the env promotion only on push to main branch
 on:
-    push:
-      branches: [ main ]
+  workflow_dispatch:
+  push:
+    paths:
+      - 'dev/**'
+    branches: 
+      - main
 
 jobs:
   # Set up staging assets

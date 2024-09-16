@@ -3,8 +3,12 @@ name: Generate Production Tyk Assets
 
 # Perform the env promotion only on push to main branch
 on:
-    push:
-      branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+  checks: write
 
 jobs:
     set-up-prod-tyk-assets:
