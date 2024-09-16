@@ -1,0 +1,16 @@
+# Tyk developer pipeline -- perform validation and linting of API definitions and policies if needed for dev env APIs.
+# This dev workflow will triggered if any PRs have been made specifically to the dev directory.
+name: Tyk Development Workflow
+
+# Execute workflow on dev pull requests
+on:
+    pull_request:
+        paths:
+            - 'dev/**'
+
+jobs:
+    # Run linter and validation workflow
+    tyk-lint:
+        uses: ./.github/workflows/tyk-lint.yml
+        with:
+            environment: 'dev'

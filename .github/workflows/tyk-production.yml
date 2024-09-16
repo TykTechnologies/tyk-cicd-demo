@@ -1,0 +1,56 @@
+# Please refer to staging for an example on automating production level assets.
+name: Generate Production Tyk Assets
+
+# Perform the env promotion only on push to main branch
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+  checks: write
+
+jobs:
+    set-up-prod-tyk-assets:
+        runs-on: ubuntu-latest
+                
+        steps:
+        # Check out the current repo and fetch only the current commits (JTBD)
+        - name: 'Checkout Repository'
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+
+        - name: 'Perform workflow to generate production assets'
+          run: |
+            echo "Hello, World!"
+        
+        # # Check for modified files
+        # - name: Check for modified files
+        #   id: git-check
+        #   run: |
+        #     if [ -n "$(git status --porcelain)" ]; then
+        #       echo "modified=true" >> $GITHUB_ENV
+        #     else
+        #       echo "modified=false" >> $GITHUB_ENV
+        #     fi
+
+        # # Push changes to remote repository
+        # - name: Commit changes
+        #   if: env.modified == 'true'
+        #   env:
+        #     ORG_NAME: ${{ secrets.ORG_NAME }}
+        #     ORG_EMAIL: ${{ secrets.ORG_EMAIL }}
+        #   run: |
+        #     git config --global user.name "$ORG_NAME"
+        #     git config --global user.email "$ORG_EMAIL"
+        #     git add .
+        #     git commit -am "CI: Update staging assets"
+        #     git push
+
+    # # Promote to staging env
+    # tyk-env-promotion:
+    #   uses: ./.github/workflows/tyk-env-promotion.yml
+    #   with:
+    #       environment: 'stg'
+            

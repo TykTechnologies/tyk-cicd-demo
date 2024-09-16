@@ -1,0 +1,75 @@
+# Basic Tyk API and Policies schema validation and linter triggered on development assets. The idea of this workflow is to validate specific field requirements 
+# or enforce governance to make sure specific custom plugins are used or formats 
+name: Tyk Schema Validation / Linter
+
+# Perform the Tyk schema validation only on PR requests
+on:
+  workflow_dispatch:
+    inputs:
+      environment: 
+        type: choice
+        options:
+          - dev
+          - stg
+          - prod
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+
+jobs:
+  schema-linter-and-validation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Check out the current repo and fetch only the current commits (JTBD)
+    - name: 'Checkout Repository'
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    # List the content that exists within the repo to validate the files
+    - name: 'List Repository Contents'
+      run: |
+        ls -la
+        pwd
+
+    # Install JQ library used to introspect the API and Policy definitions
+    - name: 'Install JQ Library'
+      uses: dcarbone/install-jq-action@v2
+    - name: 'Check JQ Library'
+      run: |
+        which jq
+        jq --version
+    
+    # Determine the environment to lint run linter against
+    - name: 'Determine Environment'
+      id: determine_environment
+      run: |
+          if [[ "${{ github.event_name }}" == "workflow_call" ]]; then
+            # Workflow called with an input
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_ENV
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # Workflow called with an input
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_ENV
+          else
+            # Pull request called with an input
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_ENV
+          fi
+    
+    # Tyk API Linting / Validation using Github Action Library
+    - name: 'Linter / validation using Spectral / Stoplight'
+      uses: stoplightio/spectral-action@latest
+      with:
+        file_glob: ${{ env.environment }}/apis/api-*.json
+        spectral_ruleset: ${{ env.environment }}/tykapi-ruleset.yaml
+      continue-on-error: false
+
+    # Tyk API Linting / Validation using JQ Library
+    - name: 'Linter / validation using JQ'
+      env: 
+        DIRECTORY: "./infrastructure/${{ env.environment }}/apis/"
+        CURR_ENV: ${{ env.environment }}
+      run: |
+        chmod +x ./.github/scripts/validate_fields.sh
+        ./.github/scripts/validate_fields.sh

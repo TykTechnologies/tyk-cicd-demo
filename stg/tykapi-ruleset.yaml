@@ -1,0 +1,33 @@
+rules:
+  no-keyless-auth:
+    description: APIs must not be keyless
+    given: "$.api_definition"
+    severity: error
+    then:
+      field: 'use_keyless' 
+      function: falsy
+
+  no-empty-target-url:
+    description: APIs must have a target_url
+    given: "$.api_definition.proxy"
+    severity: error
+    then:
+      field: 'target_url'
+      function: pattern
+      functionOptions:
+        match: '^(?!\s*$).+'
+
+  # check-authentication-methods:
+  #   description: "At least one of 'enable_jwt' or 'use_mutual_tls_auth' must be true."
+  #   given: "$.api_definition"
+  #   then:
+  #     - field: "enable_jwt"
+  #       function: truthy
+  #       functionOptions:
+  #         negation: true # Should not be false
+  #     - field: "use_mutual_tls_auth"
+  #       function: truthy
+  #       functionOptions:
+  #         negation: true # Should not be false
+  #   severity: error
+  #   message: "At least one of 'api_definition.enable_jwt' or 'api_definition.use_mutual_tls_auth' must be true."
