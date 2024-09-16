@@ -44,4 +44,4 @@ jobs:
             TYK_DASHBOARD_SECRET: ${{ inputs.environment == 'stg' && secrets.TYK_STG_DASHBOARD_SECRET || secrets.TYK_PROD_DASHBOARD_SECRET }}
           run: |
             docker run ${TYK_SYNC_REPO}:${TYK_SYNC_VERSION} version
-            docker run -v ${{ github.workspace }}:/app/data ${TYK_SYNC_REPO}:${TYK_SYNC_VERSION} sync --path /app/data --dashboard ${TYK_DASHBOARD_URL} --secret ${TYK_DASHBOARD_SECRET}
+            docker run -v ${{ github.workspace }}:/tmp/data ${TYK_SYNC_REPO}:${TYK_SYNC_VERSION} sync --dashboard ${TYK_DASHBOARD_URL} --secret ${TYK_DASHBOARD_SECRET} -t="/tmp/data"
