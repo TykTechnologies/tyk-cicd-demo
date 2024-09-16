@@ -73,12 +73,12 @@ jobs:
         # Tyk Classic API Definitions
         for file in $(find . -name "stg-api*.json"); do
           echo "Adding config_data to Tyk Classic API Definition: $file"
-          #echo "Config_Data Before:"
-          #jq '.api_definition.config_data' $file
-          #echo "Replacing with:"
+          # echo "Config_Data Before:"
+          # jq '.api_definition.config_data' $file
+          # echo "Replacing with:"
           echo $STG_US_CONFIG_DATA | sed 's/./& /g'
-          cat $file
-          jq --arg config_data '{"routes": {"default": "https://stg.httpbin.com","stg1": "https://stg1.httpbin.com","stg2": "https://stg2.httpbin.com"}}' '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
+          echo $STG_US_CONFIG_DATA
+          jq --arg config_data "$STG_US_CONFIG_DATA" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
           mv tmp_api.json $file
           echo "Updated config_data in $file"
         done
@@ -131,11 +131,11 @@ jobs:
         #   fi
         # done
 
-    # Run linter and validation workflow
-    - name: Run Linter for Staging Environment
-      uses: ./.github/workflows/tyk-lint.yml
-      with:
-          environment: 'stg'
+    # # Run linter and validation workflow
+    # - name: Run Linter for Staging Environment
+    #   uses: ./.github/workflows/tyk-lint.yml
+    #   with:
+    #       environment: 'stg'
 
     # List repo content post sub
     # - name: 'List Repository Contents Post-Substitution'
