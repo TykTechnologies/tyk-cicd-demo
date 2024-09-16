@@ -1,55 +1,172 @@
-# Please refer to staging for an example on automating production level assets.
-name: Generate Production Tyk Assets
+# Basic env promotion with GH secret store substituion triggered on successful PR reviews and approval with a push to main branch.
+# This workflow will substitution env specific values for both prod and prod and deploy them as required.
+name: Generate Prod Tyk Assets
 
 # Perform the env promotion only on push to main branch
 on:
   workflow_dispatch:
   workflow_call:
 
-permissions:
-  contents: write
-  actions: read
-  checks: write
-
 jobs:
-    set-up-prod-tyk-assets:
-        runs-on: ubuntu-latest
-                
-        steps:
-        # Check out the current repo and fetch only the current commits (JTBD)
-        - name: 'Checkout Repository'
-          uses: actions/checkout@v4
+  # Set up prod assets
+  set-up-prod-tyk-assets:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Check out the current repo and fetch only the current commits (JTBD)
+    - name: 'Checkout Repository'
+      uses: actions/checkout@v4
 
-        - name: 'Perform workflow to generate production assets'
-          run: |
-            echo "Hello, World!"
+    # List the content that exists within the repo to validate the files
+    - name: 'List Repository Contents'
+      run: |
+        ls -la
+        pwd
+        cd dev
+        ls -la
+    
+    # Install JQ library used to introspect the API and Policy definitions
+    - name: 'Install JQ Library'
+      uses: dcarbone/install-jq-action@v2
+    - name: 'Check JQ Library'
+      run: |
+        which jq
+        jq --version
+
+    # Create prod directory if needed
+    - name: "Create prod directory"
+      run: |
+        if [ ! -d prod ]; then
+          mkdir prod
+          echo "Created 'prod' directory."
+        else
+          echo "'prod' directory already exists."
+        fi
+
+    # Substitute with prod specific environment variables
+    - name: Replace proxy.target_url in JSON files
+      env:
+        PROD_US_PROXY_TARGET_URL: ${{ secrets.PROD_US_PROXY_TARGET_URL }}
+      run: |
+        cd ./dev
+        for file in $(find . -name "api*.json"); do
+          echo "Processing Tyk Classic API Definition: $file"
+          # Create a new file path in the prod directory with a prod- prefix
+          new_file="prod-$(basename "$file")"
+          # Replace proxy.target_url with the GitHub secret value and write to the new file
+          echo ${{ secrets.PROD_US_PROXY_TARGET_URL }} | sed 's/./& /g'
+          jq --arg url "$PROD_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "../prod/apis/$new_file"
+          echo "Updated target_url in $new_file"
+        done
+        # List the content that exists within the repo to validate the files
+    
+    # Substitute config_data with Prod Version
+    - name: Replace config_data with Prod Version
+      env:
+        PROD_US_CONFIG_DATA: ${{ secrets.PROD_US_CONFIG_DATA }}
+      run: |
+        # cd ./prod
+        # ls -la
+        # pwd
+        # Tyk Classic API Definitions
+        for file in $(find . -name "prod-api*.json"); do
+          echo "Adding config_data to Tyk Classic API Definition: $file"
+          # echo "Config_Data Before:"
+          # jq '.api_definition.config_data' $file
+          # echo "Replacing with:"
+          echo ${{ secrets.PROD_US_CONFIG_DATA }} | sed 's/./& /g'
+          echo ${{ secrets.PROD_US_CONFIG_DATA }} 
+          jq --arg config_data "${{ secrets.PROD_US_CONFIG_DATA }}" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
+          mv tmp_api.json $file
+          echo "Updated config_data in $file"
+        done
+        # OAS Definitions
+        # for file in $(find . -name "prod*oas*.json"); do
+        #   echo "Processing Tyk OAS Definitions"
+        #   # Create a new file path in the prod directory with a prod- prefix
+        #   new_file="prod-$(basename "$file")"
+        #   echo "Config_Data Before:"
+        #   cat $file | jq '.oas["x-tyk-api-gateway"].middleware.global.pluginConfig.data.value'
+        #   #echo "Replacing with:"
+        #   #cat $PROD_US_CONFIG_DATA
+        #   #cat $PROD_US_CONFIG_DATA | sed 's/./& /g'
+        #   jq --arg config_data "$PROD_US_CONFIG_DATA" '.oas["x-tyk-api-gateway"].middleware.global.pluginConfig.data.value = ($config_data | fromjson)' "$file" > tmp_api.json  mv temp.oas $file 
+        #   # "../prod/$new_file"
+        # done
+
+    # Substitute mTLS Root Certificate(s) with Prod Version
+    - name: Replace mTLS Root Certificates(s) with Prod Version
+      env:
+        PROD_US_MTLS_ROOT_CERT: ${{ secrets.PROD_US_MTLS_ROOT_CERT }}
+      run: |
+        cd ./prod
+        # Tyk Classic API Definitions
+        for file in $(find . -name "prod-api*.json"); do
+          mtls_api=$(jq '.api_definition.use_mutual_tls_auth' $file)
+          if [ "$mtls_api" = "true" ]; then
+            echo "Adding root cert(s) to Tyk Classic Definition: $file"
+            jq --arg root_cert "$PROD_US_MTLS_ROOT_CERT" '.api_definition.client_certificates = ($root_cert)' "$file" > tmp_api.json
+            mv tmp_api.json $file
+            echo "Updated root cert(s) in $file"
+          fi
+        done
+        # OAS Definitions
+        # for file in $(find . -name "*oas*.json"); do
+        #   echo "Processing Tyk OAS Definitions"
+        #   # Create a new file path in the prod directory with a prod- prefix
+        #   # new_file="prod-$(basename "$file")"
+        #   # Check if .oas["x-tyk-api-gateway"].server.clientCertificates.enabled is true
+        #   ENABLED=$(jq '.oas["x-tyk-api-gateway"].server.clientCertificates.enabled' "$file")
+        #   echo $ENABLED
+        #   if [ "$ENABLED" = "true" ]; then
+        #     echo "Certificate AllowList Before:"
+        #     cat $file | jq '.oas["x-tyk-api-gateway"].server.clientCertificates.allowlist'
+        #     echo "Replacing with:"
+        #     echo $PROD_US_MTLS_ROOT_CERT | sed 's/./& /g'
+        #     jq --arg root_cert "$PROD_US_MTLS_ROOT_CERT" '.oas["x-tyk-api-gateway"].server.clientCertificates.allowlist = ($root_cert | fromjson)' "$file" > tmp.json && mv tmp.json $file
+        #   else
+        #     echo "Client Certificates are not enabled. No changes made."
+        #   fi
+        # done
+
+    # # List repo content post sub
+    # - name: 'List Repository Contents Post-Substitution'
+    #   run: |
+    #     pwd
+    #     ls .github/ -la
+
+    # Check for modified files
+    - name: Commit and Push Changes
+      run: |
+        # Configure Git
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+        git branch
+        git status
         
-        # # Check for modified files
-        # - name: Check for modified files
-        #   id: git-check
-        #   run: |
-        #     if [ -n "$(git status --porcelain)" ]; then
-        #       echo "modified=true" >> $GITHUB_ENV
-        #     else
-        #       echo "modified=false" >> $GITHUB_ENV
-        #     fi
+        # Fetch the branch for the pull request
+        git fetch origin ${{ github.head_ref }}
+        # Check out the branch
+        git checkout ${{ github.head_ref }}
 
-        # # Push changes to remote repository
-        # - name: Commit changes
-        #   if: env.modified == 'true'
-        #   env:
-        #     ORG_NAME: ${{ secrets.ORG_NAME }}
-        #     ORG_EMAIL: ${{ secrets.ORG_EMAIL }}
-        #   run: |
-        #     git config --global user.name "$ORG_NAME"
-        #     git config --global user.email "$ORG_EMAIL"
-        #     git add .
-        #     git commit -am "CI: Update staging assets"
-        #     git push
+        # Add changes
+        git add .
 
-    # # Promote to staging env
-    # tyk-env-promotion:
-    #   uses: ./.github/workflows/tyk-env-promotion.yml
-    #   with:
-    #       environment: 'stg'
-            
+        # Check if there are changes to commit
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+        else
+          # Commit changes
+          git commit -m "Copy files from staging to production"
+        
+          # Push changes
+          git push origin ${{ github.head_ref }}
+        fi
+  
+  # Run linter and validation workflow
+  tyk-lint:
+    needs: set-up-prod-tyk-assets
+    uses: ./.github/workflows/tyk-lint.yml
+    with:
+        environment: 'prod'

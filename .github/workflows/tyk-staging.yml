@@ -153,15 +153,12 @@ jobs:
         # Add changes
         git add .
 
-        git status
-
-
         # Check if there are changes to commit
         if git diff --cached --quiet; then
           echo "No changes to commit."
         else
           # Commit changes
-          git commit -m "Copy files from staging to production"
+          git commit -m "Copy files from dev to staging"
         
           # Push changes
           git push origin ${{ github.head_ref }}

@@ -13,14 +13,14 @@ on:
 
 jobs:
     # Run linter and validation workflow
-    tyk-lint:
+    tyk-set-up-dev:
         uses: ./.github/workflows/tyk-lint.yml
         with:
             environment: 'dev'
     
     # Set up staging APIs and Policies if the Dev assets pass the linter / validation
     tyk-set-up-staging:
-        needs: tyk-lint
+        needs: tyk-set-up-dev
         uses: ./.github/workflows/tyk-staging.yml
         secrets: inherit
     
