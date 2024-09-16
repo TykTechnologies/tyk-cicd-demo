@@ -18,8 +18,6 @@ jobs:
         # Check out the current repo and fetch only the current commits (JTBD)
         - name: 'Checkout Repository'
           uses: actions/checkout@v4
-          with:
-            fetch-depth: 1
     
         # - name: Create .tyk.json
         #   run: |
