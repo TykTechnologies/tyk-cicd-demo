@@ -56,7 +56,7 @@ jobs:
           # Create a new file path in the stg directory with a stg- prefix
           new_file="stg-$(basename "$file")"
           # Replace proxy.target_url with the GitHub secret value and write to the new file
-          echo ${{secrets.STG_US_PROXY_TARGET_URL}} | sed 's/./& /g'
+          echo ${{ secrets.STG_US_PROXY_TARGET_URL }} | sed 's/./& /g'
           jq --arg url "$STG_US_PROXY_TARGET_URL" '.proxy.target_url = $url' "$file" > "../stg/apis/$new_file"
           echo "Updated target_url in $new_file"
         done
@@ -78,7 +78,8 @@ jobs:
           # echo "Replacing with:"
           echo ${{ secrets.STG_US_CONFIG_DATA }}  | sed 's/./& /g'
           echo ${{ secrets.STG_US_CONFIG_DATA }} 
-          jq --arg config_data "${{ secrets.STG_US_CONFIG_DATA }}" '.api_definition.config_data = ($config_data | fromjson)' "$file" > tmp_api.json
+          echo "${{ secrets.HELLO_WORLD }}"
+          jq --arg config_data "${{ secrets.STG_US_CONFIG_DATA }}" '.api_definition.config_data = ($jq | fromjson)' "$file" > tmp_api.json
           mv tmp_api.json $file
           echo "Updated config_data in $file"
         done
