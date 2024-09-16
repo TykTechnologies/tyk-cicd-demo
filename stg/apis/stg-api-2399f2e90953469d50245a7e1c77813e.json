@@ -486,6 +486,6 @@
   "user_group_owners": [],
   "user_owners": [],
   "proxy": {
-    "target_url": "us-stg-example.com"
+    "target_url": "http://httpbin.org/get?env=stg"
   }
 }
