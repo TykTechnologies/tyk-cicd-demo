@@ -16,8 +16,6 @@ jobs:
     # Check out the current repo and fetch only the current commits (JTBD)
     - name: 'Checkout Repository'
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     # List the content that exists within the repo to validate the files
     - name: 'List Repository Contents'
@@ -143,6 +141,8 @@ jobs:
         # Configure Git
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+        git branch
 
         # Add changes
         git add .
