@@ -20,10 +20,9 @@ jobs:
     # List the content that exists within the repo to validate the files
     - name: 'List Repository Contents'
       run: |
-        ls -la
-        pwd
-        cd dev
-        ls -la
+        cd stg
+        ls -Rla
+
     
     # Install JQ library used to introspect the API and Policy definitions
     - name: 'Install JQ Library'
