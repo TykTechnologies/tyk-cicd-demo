@@ -14,9 +14,8 @@ on:
 jobs:
     # Run linter and validation workflow
     tyk-dev-env:
-        uses: ./.github/workflows/tyk-lint.yml
-        with:
-            environment: 'dev'
+        uses: ./.github/workflows/tyk-dev.yml
+        secrets: inherit
     
     # Set up staging APIs and Policies if the Dev assets pass the linter / validation
     tyk-staging-env:
