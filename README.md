@@ -31,10 +31,9 @@ The GitHub Action workflow files may look a bit messy because they demonstrate v
 
 You can review the complete CICD pipeline here: [https://github.com/TykTechnologies/tyk-cicd-dev-demo/actions/runs/10923225077](https://github.com/TykTechnologies/tyk-cicd-dev-demo/actions/runs/10923225077)
 
-
 ## Getting Started
 ### Prerequisites
-1. Two Tyk environments that can be acceesible
+1. Two Tyk environments that can be accessed from the GitHub actions.
 
 ### Steps
 #### Step 1: Clone this repository and set up your GitHub repositories with two environments named staging and production.
