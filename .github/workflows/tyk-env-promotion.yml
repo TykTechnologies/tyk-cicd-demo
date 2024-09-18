@@ -1,4 +1,4 @@
-name: Tyk assets environment promotion
+name: Tyk Assets Environment Promotion
 
 # Perform the env promotion only on push to main branch
 on:
@@ -19,29 +19,29 @@ jobs:
         - name: 'Checkout Repository'
           uses: actions/checkout@v4
     
-        # - name: Create .tyk.json
-        #   run: |
-        #     cd ./stg
-        #     echo '{' > .tyk.json
-        #     echo '  "type": "apidef",' >> .tyk.json
-        #     echo '  "files": [' >> .tyk.json
-        #     find . -type f -name '*.json' -path './apis/*' -exec echo '    {"file": "{}"},' \; | sed '$ s/,$//' >> .tyk.json
-        #     echo '  ],' >> .tyk.json
-        #     echo '  "policies": [' >> .tyk.json
-        #     find . -type f -name '*.json' -path './policies/*' -exec echo '    {"file": "{}"},' \; | sed '$ s/,$//' >> .tyk.json
-        #     echo '  ],' >> .tyk.json
-        #     echo '  "assets": [' >> .tyk.json
-        #     find . -type f -name '*.json' -path './assets/*' -exec echo '    {"file": "{}"},' \; | sed '$ s/,$//' >> .tyk.json
-        #     echo '  ]' >> .tyk.json
-        #     echo '}' >> .tyk.json
-        #     cat .tyk.json
+        - name: Create .tyk.json
+          run: |
+            cd ./${{ inputs.environment }}
+            echo '{' > .tyk.json
+            echo '  "type": "apidef",' >> .tyk.json
+            echo '  "files": [' >> .tyk.json
+            find . -type f -name '*.json' -path './apis/*' -exec echo '    {"file": "{}"},' \; | sed '$ s/,$//' >> .tyk.json
+            echo '  ],' >> .tyk.json
+            echo '  "policies": [' >> .tyk.json
+            find . -type f -name '*.json' -path './policies/*' -exec echo '    {"file": "{}"},' \; | sed '$ s/,$//' >> .tyk.json
+            echo '  ],' >> .tyk.json
+            echo '  "assets": [' >> .tyk.json
+            find . -type f -name '*.json' -path './assets/*' -exec echo '    {"file": "{}"},' \; | sed '$ s/,$//' >> .tyk.json
+            echo '  ]' >> .tyk.json
+            echo '}' >> .tyk.json
+            cat .tyk.json
       
-        # - name: Sync with Tyk
-        #   env:
-        #     TYK_SYNC_REPO: ${{ vars.TYK_SYNC_REPO }}
-        #     TYK_SYNC_VERSION: ${{ vars.TYK_SYNC_VERSION }}
-        #     TYK_DASHBOARD_URL: ${{ secrets.TYK_DASHBOARD_URL }}
-        #     TYK_DASHBOARD_SECRET: ${{ secrets.TYK_DASHBOARD_SECRET }}
-        #   run: |
-        #     docker run ${TYK_SYNC_REPO}:${TYK_SYNC_VERSION} version
-        #     docker run -v ${{ github.workspace }}:/app/data ${TYK_SYNC_REPO}:${TYK_SYNC_VERSION} sync --path /app/data --dashboard ${TYK_DASHBOARD_URL} --secret ${TYK_DASHBOARD_SECRET}
+        - name: Sync with Tyk
+          env:
+            TYK_SYNC_REPO: ${{ vars.TYK_SYNC_REPO }}
+            TYK_SYNC_VERSION: ${{ vars.TYK_SYNC_VERSION }}
+            TYK_DASHBOARD_URL: ${{ inputs.environment == 'stg' && secrets.TYK_STG_DASHBOARD_URL || secrets.TYK_PROD_DASHBOARD_URL }}
+            TYK_DASHBOARD_SECRET: ${{ inputs.environment == 'stg' && secrets.TYK_STG_DASHBOARD_SECRET || secrets.TYK_PROD_DASHBOARD_SECRET }}
+          run: |
+            docker run ${TYK_SYNC_REPO}:${TYK_SYNC_VERSION} version
+            docker run -v ${{ github.workspace }}/${{ inputs.environment }}:/app/data ${TYK_SYNC_REPO}:${TYK_SYNC_VERSION} sync --path /app/data --dashboard ${TYK_DASHBOARD_URL} --secret ${TYK_DASHBOARD_SECRET}
