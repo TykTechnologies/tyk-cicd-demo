@@ -106,3 +106,7 @@ rules:
     severity: error
     message: "At least one of 'api_definition.enable_jwt' or 'api_definition.use_mutual_tls_auth' must be true."
 ```
+
+## References
+1. [https://github.com/caroltyk/sync-data](https://github.com/caroltyk/sync-data)
+2. [https://github.com/caroltyk/tyk-sync-demo](https://github.com/caroltyk/tyk-sync-demo)
